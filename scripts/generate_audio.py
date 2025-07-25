@@ -4,7 +4,7 @@ import wave
 import numpy as np
 from transformers import pipeline
 
-OUTPUT_DIR = "static/audio"
+OUTPUT_DIR = "../static/audio"
 MODEL_ID = "facebook/mms-tts-eng"
 
 TEXT_TO_GENERATE = {
