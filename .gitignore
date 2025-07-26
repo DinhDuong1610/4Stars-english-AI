@@ -29,3 +29,6 @@ Thumbs.db
 static/audio/
 
 pip-wheel-metadata/
+
+
+app/ml/models/
