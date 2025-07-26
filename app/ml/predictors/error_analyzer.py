@@ -55,7 +55,7 @@ def analyze_errors(text: str) -> list:
 
 
 if __name__ == '__main__':
-    sentence = "He walk to the market and buy an apple ."
+    sentence = "He are students"
     analysis = analyze_errors(sentence)
 
     print("-" * 30)

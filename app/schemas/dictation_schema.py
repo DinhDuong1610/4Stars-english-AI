@@ -1,8 +1,9 @@
 from pydantic import BaseModel
 from typing import List
 
+
 class DiffResult(BaseModel):
-    type: str  # 'equal', 'insert', 'delete'
+    type: str
     text: str
 
 class DictationCheckRequest(BaseModel):
@@ -12,3 +13,4 @@ class DictationCheckRequest(BaseModel):
 class DictationCheckResponse(BaseModel):
     score: float
     diffs: List[DiffResult]
+    explanations: List[str]
