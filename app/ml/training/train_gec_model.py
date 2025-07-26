@@ -1,49 +1,68 @@
 import torch
 from datasets import load_dataset
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, DataCollatorForSeq2Seq, Seq2SeqTrainingArguments, \
-    Seq2SeqTrainer
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, DataCollatorForSeq2Seq, Seq2SeqTrainingArguments, Seq2SeqTrainer
 
 MODEL_CHECKPOINT = "t5-small"
 DATASET_NAME = "jfleg"
 PREFIX = "fix-grammar: "
 
-def prepare_and_process_data():
-    print("Bắt đầu tải dữ liệu và tokenizer...")
+MODEL_OUTPUT_DIR = "app/ml/models/gec-t5-small-final"
 
+
+def train_model():
+    print("Bắt đầu tải và xử lý dữ liệu...")
     raw_datasets = load_dataset(DATASET_NAME)
-    print("\nCấu trúc dữ liệu thô:")
-    print(raw_datasets)
-
-    print("\nVí dụ dữ liệu:")
-    print("Câu sai:", raw_datasets["validation"][0]["sentence"])
-    print("Các câu sửa đúng:", raw_datasets["validation"][0]["corrections"])
-
     tokenizer = AutoTokenizer.from_pretrained(MODEL_CHECKPOINT)
-    print(f"\nĐã tải tokenizer cho model: {MODEL_CHECKPOINT}")
 
     def preprocess_function(examples):
         inputs = [PREFIX + sent for sent in examples["sentence"]]
-
         targets = [cor[0] for cor in examples["corrections"]]
-
-        model_inputs = tokenizer(inputs, max_length=128, truncation=True, padding="max_length")
-        labels = tokenizer(text_target=targets, max_length=128, truncation=True, padding="max_length")
-
+        model_inputs = tokenizer(inputs, max_length=128, truncation=True)
+        labels = tokenizer(text_target=targets, max_length=128, truncation=True)
         model_inputs["labels"] = labels["input_ids"]
         return model_inputs
 
-    print("\nBắt đầu tiền xử lý và tokenize dữ liệu...")
     tokenized_datasets = raw_datasets.map(preprocess_function, batched=True)
     print("Xử lý dữ liệu thành công!")
 
-    print("\nCấu trúc dữ liệu sau khi xử lý:")
-    print(tokenized_datasets)
-    print("\nVí dụ một bản ghi đã xử lý (input_ids):")
-    print(tokenized_datasets["validation"][0]["input_ids"])
+    print(f"Bắt đầu tải model cơ sở: {MODEL_CHECKPOINT}...")
+    model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_CHECKPOINT)
+    print("Tải model thành công!")
 
-    return tokenizer, tokenized_datasets
+    data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, model=model)
+
+    training_args = Seq2SeqTrainingArguments(
+        output_dir=MODEL_OUTPUT_DIR,
+        eval_strategy="epoch",
+        learning_rate=2e-5,
+        per_device_train_batch_size=8,
+        per_device_eval_batch_size=8,
+        weight_decay=0.01,
+        save_total_limit=5,
+        num_train_epochs=3,
+        predict_with_generate=True,
+    )
+
+    trainer = Seq2SeqTrainer(
+        model=model,
+        args=training_args,
+        train_dataset=tokenized_datasets["validation"],
+        eval_dataset=tokenized_datasets["test"],
+        tokenizer=tokenizer,
+        data_collator=data_collator,
+    )
+
+    print("\n" + "="*50)
+    print("BẮT ĐẦU QUÁ TRÌNH HUẤN LUYỆN MODEL")
+    print("="*50 + "\n")
+
+    trainer.train()
+
+    print(f"\nHuấn luyện hoàn tất! Lưu model cuối cùng vào thư mục: {MODEL_OUTPUT_DIR}")
+    trainer.save_model(MODEL_OUTPUT_DIR)
+    print("Đã lưu model thành công!")
 
 
 if __name__ == "__main__":
-    prepare_and_process_data()
-    print("\nHoàn tất bước chuẩn bị dữ liệu!")
+    train_model()
+    print("\nToàn bộ quá trình đã hoàn tất!")
