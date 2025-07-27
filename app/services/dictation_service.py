@@ -49,12 +49,14 @@ def parse_explanation_string(explanation: str) -> List[str]:
 
 
 def check_dictation_answer(user_text: str, correct_text: str) -> Dict:
-    explanation_string = generate_explanation(user_text, correct_text)
+    lower_user_text = user_text.lower()
+    lower_correct_text = correct_text.lower()
+
+    explanation_string = generate_explanation(lower_user_text, lower_correct_text)
     explanations = parse_explanation_string(explanation_string)
 
     dmp = dmp_module.diff_match_patch()
-    lower_user_text = user_text.lower()
-    lower_correct_text = correct_text.lower()
+
     diffs_raw = dmp.diff_main(lower_correct_text, lower_user_text)
     dmp.diff_cleanupSemantic(diffs_raw)
 
