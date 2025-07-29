@@ -9,6 +9,12 @@ OUTPUT_FILE = "app/ml/training/explanation_train_data.csv"
 NUM_SAMPLES = 50000
 
 
+def clean_sentence(text: str) -> str:
+    colon_index = text.find(':')
+    if colon_index != -1:
+        return text[colon_index + 1:].strip()
+    return text.strip()
+
 def create_explanation_data():
 
     print("Đang khởi tạo công cụ phân tích lỗi (errant)...")
@@ -32,7 +38,7 @@ def create_explanation_data():
 
         for entry in tqdm(dataset_split):
             try:
-                original_sentence = entry["src"]
+                original_sentence = clean_sentence(entry["src"])
                 corrected_sentence = entry["tgt"]
 
                 if not original_sentence or not corrected_sentence or original_sentence == corrected_sentence:
