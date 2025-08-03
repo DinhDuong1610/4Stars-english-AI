@@ -40,7 +40,7 @@ def train_explanation_model():
     training_args = Seq2SeqTrainingArguments(
         output_dir=MODEL_OUTPUT_DIR,
 
-        num_train_epochs=2,
+        num_train_epochs=3,
 
         learning_rate=2e-5,
         per_device_train_batch_size=8,

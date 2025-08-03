@@ -8,7 +8,6 @@ DATA_FILE = "app/ml/training/train_bert_data.txt"
 MODEL_CHECKPOINT = "bert-base-uncased"
 MODEL_OUTPUT_DIR = "app/ml/models/error-analyzer-bert"
 
-
 def train_analyzer_model():
     print(f"Đang đọc dữ liệu từ: {DATA_FILE}...")
 
