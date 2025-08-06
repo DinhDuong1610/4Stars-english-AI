@@ -13,8 +13,6 @@ def _load_model():
     global model, tokenizer
 
     if model is None or tokenizer is None:
-        print(f"Đang load model từ thư mục: {MODEL_DIR}...")
-
         tokenizer = AutoTokenizer.from_pretrained(MODEL_DIR)
         model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_DIR).to(device)
 
@@ -41,7 +39,6 @@ if __name__ == '__main__':
     corrected_sentence_1 = correct_grammar(incorrect_sentence_1)
 
     print("-" * 30)
-    print("Kiểm tra chức năng sửa lỗi:")
     print(f"Câu sai:     '{incorrect_sentence_1}'")
     print(f"Câu sửa đúng: '{corrected_sentence_1}'")
     print("-" * 30)

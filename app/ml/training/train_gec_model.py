@@ -10,7 +10,6 @@ MODEL_OUTPUT_DIR = "app/ml/models/gec-t5-small-final"
 
 
 def train_model():
-    print("Bắt đầu tải và xử lý dữ liệu...")
     raw_datasets = load_dataset(DATASET_NAME)
     tokenizer = AutoTokenizer.from_pretrained(MODEL_CHECKPOINT)
 
@@ -23,9 +22,7 @@ def train_model():
         return model_inputs
 
     tokenized_datasets = raw_datasets.map(preprocess_function, batched=True)
-    print("Xử lý dữ liệu thành công!")
 
-    print(f"Bắt đầu tải model cơ sở: {MODEL_CHECKPOINT}...")
     model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_CHECKPOINT)
     print("Tải model thành công!")
 
@@ -52,13 +49,8 @@ def train_model():
         data_collator=data_collator,
     )
 
-    print("\n" + "="*50)
-    print("BẮT ĐẦU QUÁ TRÌNH HUẤN LUYỆN MODEL")
-    print("="*50 + "\n")
-
     trainer.train()
 
-    print(f"\nHuấn luyện hoàn tất! Lưu model cuối cùng vào thư mục: {MODEL_OUTPUT_DIR}")
     trainer.save_model(MODEL_OUTPUT_DIR)
     print("Đã lưu model thành công!")
 

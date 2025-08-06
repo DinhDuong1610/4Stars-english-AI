@@ -9,7 +9,6 @@ MODEL_CHECKPOINT = "bert-base-uncased"
 MODEL_OUTPUT_DIR = "app/ml/models/error-analyzer-bert"
 
 def train_analyzer_model():
-    print(f"Đang đọc dữ liệu từ: {DATA_FILE}...")
 
     def read_data_file(file_path):
         tokens, tags = [], []
@@ -33,7 +32,6 @@ def train_analyzer_model():
     unique_tags = sorted(list(set(tag for tag_list in all_tags for tag in tag_list)))
     label_to_id = {tag: i for i, tag in enumerate(unique_tags)}
     id_to_label = {i: tag for i, tag in enumerate(unique_tags)}
-    print(f"Đã tìm thấy {len(unique_tags)} nhãn lỗi duy nhất.")
 
     all_tags_as_ids = [[label_to_id[tag] for tag in tag_list] for tag_list in all_tags]
 
@@ -41,10 +39,8 @@ def train_analyzer_model():
         "train": datasets.Dataset.from_dict({"tokens": all_tokens, "ner_tags": all_tags_as_ids})
     }).shuffle(seed=42)["train"].train_test_split(test_size=0.1)
 
-    print("Đã tạo và chia bộ dữ liệu thành công!")
     print(dataset)
 
-    print(f"Đang tải tokenizer cho model: {MODEL_CHECKPOINT}...")
     tokenizer = AutoTokenizer.from_pretrained(MODEL_CHECKPOINT)
 
     def tokenize_and_align_labels(examples):
@@ -66,10 +62,8 @@ def train_analyzer_model():
         tokenized_inputs["labels"] = labels
         return tokenized_inputs
 
-    print("Bắt đầu tokenize và căn chỉnh nhãn...")
     tokenized_datasets = dataset.map(tokenize_and_align_labels, batched=True)
 
-    print("Bắt đầu tải model cơ sở...")
     model = AutoModelForTokenClassification.from_pretrained(
         MODEL_CHECKPOINT,
         num_labels=len(unique_tags),
@@ -98,14 +92,8 @@ def train_analyzer_model():
         data_collator=data_collator,
     )
 
-    print("\n" + "=" * 50)
-    print("BẮT ĐẦU QUÁ TRÌNH HUẤN LUYỆN MODEL BERT")
-    print("Quá trình này có thể mất nhiều thời gian...")
-    print("=" * 50 + "\n")
-
     trainer.train()
 
-    print(f"\nHuấn luyện hoàn tất! Lưu model cuối cùng vào thư mục: {MODEL_OUTPUT_DIR}")
     trainer.save_model(MODEL_OUTPUT_DIR)
     print("Đã lưu model thành công!")
 

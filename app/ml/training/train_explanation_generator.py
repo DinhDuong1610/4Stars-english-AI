@@ -9,14 +9,11 @@ MODEL_OUTPUT_DIR = "app/ml/models/explanation-generator-t5-small"
 
 
 def train_explanation_model():
-    print(f"Đang tải dữ liệu từ: {DATA_FILE}...")
     raw_datasets = load_dataset('csv', data_files=DATA_FILE)
 
     split_datasets = raw_datasets['train'].train_test_split(test_size=0.1, seed=42)
-    print("Đã tải và chia bộ dữ liệu thành công!")
     print(split_datasets)
 
-    print(f"Đang tải tokenizer cho model: {MODEL_CHECKPOINT}...")
     tokenizer = AutoTokenizer.from_pretrained(MODEL_CHECKPOINT)
 
     def preprocess_function(examples):
@@ -29,11 +26,8 @@ def train_explanation_model():
         model_inputs["labels"] = labels["input_ids"]
         return model_inputs
 
-    print("Bắt đầu tokenize dữ liệu...")
     tokenized_datasets = split_datasets.map(preprocess_function, batched=True)
-    print("Tokenize dữ liệu thành công!")
 
-    print("Bắt đầu tải model cơ sở T5...")
     model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_CHECKPOINT)
     data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, model=model)
 
@@ -66,14 +60,9 @@ def train_explanation_model():
         data_collator=data_collator,
     )
 
-    print("\n" + "=" * 50)
-    print("BẮT ĐẦU QUÁ TRÌNH HUẤN LUYỆN MODEL T5")
-    print("Quá trình này có thể mất nhiều thời gian...")
-    print("=" * 50 + "\n")
 
     trainer.train()
 
-    print(f"\nHuấn luyện hoàn tất! Lưu model cuối cùng vào thư mục: {MODEL_OUTPUT_DIR}")
     trainer.save_model(MODEL_OUTPUT_DIR)
     print("Đã lưu model thành công!")
 
