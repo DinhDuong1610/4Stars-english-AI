@@ -146,7 +146,7 @@ Endpoint chính để phân tích một bài nghe-chép.
     Ứng dụng sẽ chạy tại `http://127.0.0.1:8000`.
     Truy cập `http://127.0.0.1:8000/docs` để xem tài liệu và thử nghiệm API.
 
-🌐 Dự án Liên quan (Related Project)
+## 🌐 Dự án Liên quan (Related Project)
 API này được xây dựng để phục vụ như một microservice chuyên biệt cho backend chính của website học tiếng Anh. Backend chính được xây dựng bằng Java Spring Boot.
 
 ➡️ Link tới dự án Java: https://github.com/DinhDuong1610/4stars-english-BE
