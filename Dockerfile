@@ -7,7 +7,7 @@ RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
 RUN python -m spacy download en_core_web_sm
 
-COPY ./main.py /code/main.py
+COPY . /code/
 
 EXPOSE 8000
 
