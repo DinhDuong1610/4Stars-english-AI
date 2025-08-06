@@ -29,3 +29,8 @@ Thumbs.db
 static/audio/
 
 pip-wheel-metadata/
+
+
+app/ml/models/
+
+app/ml/training/train_bert_data.txt
